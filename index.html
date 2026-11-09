@@ -2,26 +2,430 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Perfect Tenses</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4a148c">
+<title>Perfect Tenses · Present · Past · Future</title>
 <style>
-body{font-family:system-ui;max-width:560px;margin:40px auto;padding:0 16px;line-height:1.5;background:#f6f0fa;color:#1a1025}
-.card{background:#fff;border-radius:12px;padding:20px;border:1px solid #d4c4e0}
-a.btn{display:inline-block;background:#7b1fa2;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:10px}
-code{background:#efe6f5;padding:2px 6px;border-radius:4px;font-size:.9em}
+:root{
+  --p:#7b1fa2;--p2:#4a148c;--s:#2e7d32;--e:#c62828;--w:#ef6c00;
+  --bg:#f6f0fa;--c:#fff;--t:#1a1025;--m:#5c4d6e;--b:#d4c4e0;
+  --ok:rgba(46,125,50,.12);--bad:rgba(198,40,40,.12);
+}
+[data-theme=dark]{
+  --p:#ce93d8;--p2:#ba68c8;--s:#66bb6a;--e:#ef5350;--w:#ffb74d;
+  --bg:#120e18;--c:#1a1524;--t:#f0e8f8;--m:#a898b8;--b:#3a3048;
+  --ok:rgba(102,187,106,.15);--bad:rgba(239,83,80,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+button,input,select{font-family:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--t);line-height:1.45;min-height:100vh;padding-bottom:80px}
+header{background:linear-gradient(135deg,#4a148c,#7b1fa2 55%,#9c27b0);color:#fff;padding:14px 12px 12px;text-align:center;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+header h1{font-size:1.15rem;font-weight:700}
+header p{font-size:.75rem;opacity:.9;margin-top:3px}
+.tools{margin-top:8px}
+.tools button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:5px 12px;border-radius:16px;font-size:.72rem;font-weight:600;margin:0 2px}
+#tensePick{max-width:560px;margin:24px auto;padding:0 14px}
+.tp-card{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:18px;margin-bottom:12px;cursor:pointer;transition:.15s;text-align:left}
+.tp-card:hover{border-color:var(--p);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.tp-card h2{font-size:1.05rem;color:var(--p);margin-bottom:4px}
+.tp-card p{font-size:.82rem;color:var(--m)}
+.tp-card .form{font-size:.78rem;margin-top:8px;padding:8px;background:var(--bg);border-radius:8px;font-family:ui-monospace,monospace}
+#app{display:none;max-width:720px;margin:0 auto;padding:10px 12px 24px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;color:var(--p);margin:8px 0 12px;background:none;border:none}
+.tabs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.tab{padding:6px 11px;border:2px solid var(--b);border-radius:18px;background:var(--c);font-size:.7rem;font-weight:600;color:var(--p)}
+.tab.active{background:var(--p);color:#fff;border-color:var(--p)}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:11px}
+.card h3{font-size:.95rem;color:var(--p);margin-bottom:8px}
+.rule{padding:10px;border-left:4px solid var(--p);background:var(--bg);border-radius:0 8px 8px 0;margin-bottom:8px;font-size:.86rem}
+.rule b{display:block;color:var(--p);margin-bottom:2px}
+.ex{font-style:italic;color:var(--m);font-size:.8rem;margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:.8rem;margin:8px 0}
+th,td{border:1px solid var(--b);padding:6px 8px;text-align:left}
+th{background:var(--bg);color:var(--p)}
+.q{padding:12px 0;border-bottom:1px solid var(--b)}
+.q:last-child{border-bottom:none}
+.q-n{font-size:.68rem;font-weight:700;color:var(--p);margin-bottom:4px}
+.q-t{font-weight:600;font-size:.92rem;margin-bottom:8px}
+.opts{display:flex;flex-direction:column;gap:5px}
+.opt{padding:10px 12px;border:2px solid var(--b);border-radius:8px;background:var(--c);text-align:left;font-size:.86rem}
+.opt.sel{border-color:var(--p);background:rgba(123,31,162,.08)}
+[data-theme=dark] .opt.sel{background:rgba(206,147,216,.12)}
+.opt.ok{border-color:var(--s);background:var(--ok);color:var(--s)}
+.opt.bad{border-color:var(--e);background:var(--bad);color:var(--e)}
+.opt:disabled{pointer-events:none}
+.fb{font-size:.78rem;margin-top:6px;min-height:1.1em}
+.fb.ok{color:var(--s)}.fb.bad{color:var(--e)}
+.btn{padding:10px 14px;border:none;border-radius:8px;background:var(--p);color:#fff;font-weight:600;font-size:.85rem;margin:3px 2px}
+.btn.sec{background:var(--c);color:var(--p);border:2px solid var(--b)}
+.score{text-align:center;font-weight:700;margin:10px 0 4px}
+.bar{height:8px;background:var(--b);border-radius:4px;overflow:hidden;margin:8px 0}
+.fill{height:100%;background:linear-gradient(90deg,var(--p),var(--s));width:0;transition:width .3s}
+.sticky{position:sticky;bottom:0;background:var(--c);border-top:1px solid var(--b);padding:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;z-index:20}
+.gap-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.92rem;line-height:1.7}
+.gap-row select,.gap-row input{padding:6px 8px;border:2px solid var(--b);border-radius:6px;background:var(--c);font-size:.85rem;min-width:90px}
+.gap-row select.ok,.gap-row input.ok{border-color:var(--s)}
+.gap-row select.bad,.gap-row input.bad{border-color:var(--e)}
+.err{background:var(--bg);padding:10px;border-radius:8px;font-size:.9rem;margin-bottom:6px}
+.err .w{color:var(--e);text-decoration:line-through;margin-right:6px}
+.hint{font-size:.76rem;color:var(--m);margin-bottom:10px}
 </style>
 </head>
 <body>
-<h1>Perfect Tenses</h1>
-<p>Present · Past · Future Perfect</p>
-<div class="card">
-<p><b>Загрузите полный файл один раз:</b></p>
-<ol>
-<li><a href="https://github.com/uladzislaushevchik-sudo/perfect-tenses/upload/main">Upload files</a></li>
-<li>Файл <code>Perfect_Tenses_Interactive.html</code> → переименовать в <code>index.html</code></li>
-<li>Commit → Settings → Pages → main / root</li>
-</ol>
-<p><a class="btn" href="https://github.com/uladzislaushevchik-sudo/perfect-tenses/upload/main">Загрузить →</a></p>
+<header>
+  <h1>Perfect Tenses</h1>
+  <p>Present · Past · Future Perfect</p>
+  <div class="tools">
+    <button type="button" onclick="toggleTheme()">🌓 Тема</button>
+    <button type="button" onclick="resetAll()">↺ Сброс</button>
+  </div>
+</header>
+
+<div id="tensePick">
+  <div class="tp-card" onclick="start('present')">
+    <h2>Present Perfect</h2>
+    <p>Опыт, результат сейчас, незаконченный период</p>
+    <div class="form">have/has + V3 · I have finished · She hasn\'t been · Have they seen it?</div>
+  </div>
+  <div class="tp-card" onclick="start('past')">
+    <h2>Past Perfect</h2>
+    <p>Действие раньше другого в прошлом</p>
+    <div class="form">had + V3 · I had left · She hadn\'t called · Had they arrived?</div>
+  </div>
+  <div class="tp-card" onclick="start('future')">
+    <h2>Future Perfect</h2>
+    <p>Действие завершится к моменту в будущем</p>
+    <div class="form">will have + V3 · I will have finished · She won\'t have arrived · Will they have left?</div>
+  </div>
 </div>
+
+<div id="app">
+  <button type="button" class="back" onclick="goHome()">← Все времена</button>
+  <div id="tenseTitle" style="font-weight:700;font-size:1.05rem;color:var(--p);margin-bottom:8px"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="panels"></div>
+</div>
+
+<script>
+const STORE='perfectTenses_v1';
+const TENSES={
+  present:{
+    name:'Present Perfect',
+    form:'have / has + V3 (Past Participle)',
+    uses:[
+      ['Опыт в жизни (без точного времени)','I have been to Japan. · Have you ever eaten sushi?'],
+      ['Результат важен сейчас','She has lost her keys (so she can\'t open the door).'],
+      ['Незаконченный период (today, this week, since, for)','I have worked here since 2020. · We haven\'t seen him this week.'],
+      ['Только что / recently / already / yet','I have just finished. · Has the train left yet?'],
+      ['How long…? с for / since','How long have you known her? — For five years.']
+    ],
+    table:[
+      ['+','I/You/We/They have worked','He/She/It has worked'],
+      ['−','I have not (haven\'t) worked','She has not (hasn\'t) worked'],
+      ['?','Have you worked?','Has she worked?']
+    ],
+    markers:'ever, never, just, already, yet, since, for, so far, recently, today, this week',
+    spelling:'V3: regular +ed · irregular: go→gone, see→seen, write→written, be→been'
+  },
+  past:{
+    name:'Past Perfect',
+    form:'had + V3 (для всех лиц)',
+    uses:[
+      ['Действие произошло раньше другого в прошлом','When I arrived, the train had left.'],
+      ['До определённого момента в прошлом','By 8 pm she had finished her homework.'],
+      ['В косвенной речи (после said / told)','He said he had never been there.'],
+      ['Третий условный (if + Past Perfect)','If I had known, I would have helped.']
+    ],
+    table:[
+      ['+','I/He/She/We/You/They had worked'],
+      ['−','I had not (hadn\'t) worked'],
+      ['?','Had she worked? · Had they arrived?']
+    ],
+    markers:'by the time, before, after, already, just, when (+ Past Simple)',
+    spelling:'had + V3 · одинаково для I/he/they'
+  },
+  future:{
+    name:'Future Perfect',
+    form:'will have + V3',
+    uses:[
+      ['Действие завершится к моменту в будущем','By next Friday I will have finished the project.'],
+      ['К приходу / к определённому времени','When you arrive, we will have left.'],
+      ['Предположение о том, что уже произошло к будущему','She will have arrived by now. (иногда)']
+    ],
+    table:[
+      ['+','I/He/She/We/You/They will have worked'],
+      ['−','I will not (won\'t) have worked'],
+      ['?','Will she have worked? · Will they have finished?']
+    ],
+    markers:'by tomorrow, by the time, by 2030, before, when you arrive',
+    spelling:'will have + V3 · для всех лиц одинаково'
+  }
+};
+
+const DATA={
+  present:{
+    choose:[
+      {q:'I ___ to Paris three times.',a:'have been',o:['have been','was','have go','has been']},
+      {q:'She ___ just ___ the email.',a:'has / sent',o:['has / sent','have / sent','has / send','did / send']},
+      {q:'___ you ever ___ sushi?',a:'Have / eaten',o:['Have / eaten','Did / eat','Has / eaten','Have / eat']},
+      {q:'They ___ here since 2019.',a:'have lived',o:['have lived','live','are living','lived']},
+      {q:'He ___ not ___ the news yet.',a:'has / heard',o:['has / heard','have / heard','did / hear','has / hear']},
+      {q:'How long ___ you ___ English?',a:'have / studied',o:['have / studied','do / study','are / studying','did / study']},
+      {q:'We ___ already ___ lunch.',a:'have / had',o:['have / had','has / had','had / had','have / have']},
+      {q:'___ the package ___ yet?',a:'Has / arrived',o:['Has / arrived','Have / arrived','Did / arrive','Has / arrive']}
+    ],
+    gaps:[
+      {t:['She ',' never ',' a horse.'],a:['has','ridden'],o:[['has','have','is'],['ridden','rode','ride']]},
+      {t:['',' you ',' your homework yet?'],a:['Have','finished'],o:[['Have','Did','Has'],['finished','finish','finishing']]},
+      {t:['I ',' in this city for ten years.'],a:['have lived'],o:[['have lived','live','am living']]},
+      {t:['He ',' not ',' back from work.'],a:['has','come'],o:[['has','have','is'],['come','came','coming']]}
+    ],
+    error:[
+      {w:'I have went to London.',r:'I have gone to London.'},
+      {w:'She have finished the test.',r:'She has finished the test.'},
+      {w:'Did you ever been to Italy?',r:'Have you ever been to Italy?'},
+      {w:'He has already ate.',r:'He has already eaten.'}
+    ],
+    mix:[
+      {q:'I can\'t find my keys. I ___ them.',a:'have lost',o:['have lost','lost','am losing','lose']},
+      {q:'___ she ___ from the trip yet?',a:'Has / returned',o:['Has / returned','Did / return','Have / returned','Has / return']},
+      {q:'We ___ not ___ each other for years.',a:'have / seen',o:['have / seen','did / see','has / seen','have / see']}
+    ]
+  },
+  past:{
+    choose:[
+      {q:'When I got home, everyone ___ to bed.',a:'had gone',o:['had gone','has gone','went','have gone']},
+      {q:'She ___ the book before the film started.',a:'had read',o:['had read','has read','read','was reading']},
+      {q:'___ you ___ him before that day?',a:'Had / met',o:['Had / met','Have / met','Did / meet','Had / meet']},
+      {q:'By 10 pm they ___ the work.',a:'had finished',o:['had finished','have finished','finished','were finishing']},
+      {q:'He said he ___ never ___ her.',a:'had / seen',o:['had / seen','has / seen','have / seen','did / see']},
+      {q:'I ___ not ___ the message when she called.',a:'had / received',o:['had / received','have / received','did / receive','was / receiving']},
+      {q:'After we ___ dinner, we went for a walk.',a:'had had',o:['had had','have had','had','were having']},
+      {q:'The train ___ already ___ when we arrived.',a:'had / left',o:['had / left','has / left','did / leave','was / leaving']}
+    ],
+    gaps:[
+      {t:['By the time the police came, the thief ',' .' ],a:['had escaped'],o:[['had escaped','has escaped','escaped']]},
+      {t:['She ',' the letter before she left.'],a:['had written'],o:[['had written','has written','wrote']]},
+      {t:['',' they ',' the news before you told them?'],a:['Had','heard'],o:[['Had','Have','Did'],['heard','hear','hearing']]},
+      {t:['I ',' not ',' him before the party.'],a:['had','met'],o:[['had','have','did'],['met','meet','meeting']]}
+    ],
+    error:[
+      {w:'When I arrived, she has left.',r:'When I arrived, she had left.'},
+      {w:'He had already ate breakfast.',r:'He had already eaten breakfast.'},
+      {w:'Had you ever went there before?',r:'Had you ever been there before?'},
+      {w:'They hadn\'t finished yet when I have arrived.',r:'They hadn\'t finished yet when I arrived.'}
+    ],
+    mix:[
+      {q:'I was tired because I ___ well.',a:'hadn\'t slept',o:['hadn\'t slept','haven\'t slept','didn\'t sleep','wasn\'t sleeping']},
+      {q:'___ the film ___ when you sat down?',a:'Had / started',o:['Had / started','Has / started','Did / start','Was / starting']},
+      {q:'She was angry because he ___ her birthday.',a:'had forgotten',o:['had forgotten','has forgotten','forgot','was forgetting']}
+    ]
+  },
+  future:{
+    choose:[
+      {q:'By next year I ___ my degree.',a:'will have finished',o:['will have finished','will finish','have finished','am finishing']},
+      {q:'When you arrive, we ___ dinner.',a:'will have had',o:['will have had','will have','have had','are having']},
+      {q:'___ they ___ by 6 o\'clock?',a:'Will / have left',o:['Will / have left','Will / leave','Have / left','Are / leaving']},
+      {q:'She ___ not ___ the report by Friday.',a:'will / have completed',o:['will / have completed','will / complete','has / completed','is / completing']},
+      {q:'By 2030 many jobs ___ .',a:'will have changed',o:['will have changed','will change','have changed','are changing']},
+      {q:'In two hours he ___ the whole book.',a:'will have read',o:['will have read','will read','has read','is reading']},
+      {q:'___ you ___ the project before the deadline?',a:'Will / have finished',o:['Will / have finished','Will / finish','Have / finished','Do / finish']},
+      {q:'They ___ by the time the guests come.',a:'will have cleaned',o:['will have cleaned','will clean','have cleaned','are cleaning']}
+    ],
+    gaps:[
+      {t:['By tomorrow she ',' the exam.'],a:['will have taken'],o:[['will have taken','will take','has taken']]},
+      {t:['',' you ',' packing by 9?'],a:['Will','have finished'],o:[['Will','Do','Have'],['have finished','finish','finished']]},
+      {t:['He ',' not ',' home before midnight.'],a:['will','have returned'],o:[['will','has','is'],['have returned','return','returned']]},
+      {t:['By the end of the month we ',' all the units.'],a:['will have studied'],o:[['will have studied','will study','have studied']]}
+    ],
+    error:[
+      {w:'By Friday I will finished the work.',r:'By Friday I will have finished the work.'},
+      {w:'She will have write the letter by then.',r:'She will have written the letter by then.'},
+      {w:'Will have they arrived by noon?',r:'Will they have arrived by noon?'},
+      {w:'We will not have leave before you come.',r:'We will not have left before you come.'}
+    ],
+    mix:[
+      {q:'Call after 8 — I ___ by then.',a:'will have arrived',o:['will have arrived','will arrive','have arrived','am arriving']},
+      {q:'___ the meeting ___ when we get there?',a:'Will / have started',o:['Will / have started','Will / start','Has / started','Is / starting']},
+      {q:'In 50 years people ___ on Mars.',a:'will have landed',o:['will have landed','will land','have landed','are landing']}
+    ]
+  }
+};
+
+let tense=null, state={};
+
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleTheme(){const d=document.documentElement;d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'':'dark');}
+function loadS(){try{return JSON.parse(localStorage.getItem(STORE)||'{}');}catch(e){return{};}}
+function saveS(d){try{localStorage.setItem(STORE,JSON.stringify(d));}catch(e){}}
+function persist(k,ok,t){const d=loadS();d[tense+'_'+k]={ok,total:t,at:new Date().toISOString()};saveS(d);}
+function norm(s){return String(s).toLowerCase().replace(/[’']/g,"'").replace(/[.,!?]/g,'').replace(/\s+/g,' ').trim();}
+
+function goHome(){document.getElementById('app').style.display='none';document.getElementById('tensePick').style.display='block';tense=null;}
+function start(t){
+  tense=t;
+  document.getElementById('tensePick').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('tenseTitle').textContent=TENSES[t].name;
+  build();
+}
+
+function build(){
+  const tabs=[['theory','Теория'],['choose','Выбор'],['gaps','Пропуски'],['error','Ошибки'],['mix','Микс'],['result','Итог']];
+  document.getElementById('tabs').innerHTML=tabs.map(([id,lab])=>`<button type="button" class="tab" data-p="${id}" onclick="show('${id}')">${lab}</button>`).join('');
+  const T=TENSES[tense];
+  const theory=`<div class="panel" id="p-theory"><div class="card">
+    <h3>Формула</h3>
+    <div class="rule"><b>${esc(T.form)}</b></div>
+    <h3 style="margin-top:12px">Случаи употребления</h3>
+    ${T.uses.map(([u,e])=>`<div class="rule"><b>${esc(u)}</b><div class="ex">${esc(e)}</div></div>`).join('')}
+    <h3 style="margin-top:12px">Формы</h3>
+    <table>${T.table.map(r=>`<tr>${r.map((c,i)=>i===0?`<th>${esc(c)}</th>`:`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table>
+    <div class="rule"><b>Маркеры</b><div class="ex">${esc(T.markers)}</div></div>
+    <div class="rule"><b>Важно</b><div class="ex">${esc(T.spelling)}</div></div>
+  </div></div>`;
+
+  const panels=['choose','gaps','error','mix'].map(k=>{
+    return `<div class="panel" id="p-${k}"><div class="card"><h3>${{choose:'Выбор ответа',gaps:'Пропуски',error:'Исправь ошибки',mix:'Микс'}[k]}</h3>
+      <p class="hint">Без подсказок до проверки. Варианты перемешаны.</p>
+      <div class="bar"><div class="fill" id="fill-${k}"></div></div>
+      <div id="box-${k}"></div>
+      <div class="score" id="score-${k}"></div></div>
+      <div class="sticky"><button class="btn" onclick="check('${k}')">Проверить</button>
+      <button class="btn sec" onclick="render('${k}')">Заново</button></div></div>`;
+  }).join('');
+
+  document.getElementById('panels').innerHTML=theory+panels+
+    `<div class="panel" id="p-result"><div class="card"><h3>Итог · ${esc(T.name)}</h3><div id="box-result"></div></div></div>`;
+  ['choose','gaps','error','mix'].forEach(render);
+  show('theory');
+}
+
+function show(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.p===id));
+  const el=document.getElementById('p-'+id);
+  if(el) el.classList.add('active');
+  if(id==='result') showResult();
+  window.scrollTo(0,0);
+}
+
+function render(k){
+  const d=DATA[tense][k];
+  if(k==='choose'||k==='mix'){
+    const items=d.map((it,i)=>({...it,_o:shuffle(it.o),_i:i}));
+    state[k]={items,ans:{},done:false};
+    document.getElementById('box-'+k).innerHTML=items.map((it,idx)=>`
+      <div class="q" data-i="${idx}"><div class="q-n">${idx+1}</div><div class="q-t">${esc(it.q)}</div>
+      <div class="opts">${it._o.map(o=>`<button type="button" class="opt" data-v="${esc(o)}" onclick="sel('${k}',${idx},this)">${esc(o)}</button>`).join('')}</div>
+      <div class="fb" id="fb-${k}-${idx}"></div></div>`).join('');
+  } else if(k==='gaps'){
+    state.gaps={items:d};
+    document.getElementById('box-gaps').innerHTML=d.map((g,idx)=>{
+      let h=`<div class="q"><div class="q-n">${idx+1}</div><div class="gap-row">`;
+      g.t.forEach((part,pi)=>{
+        h+=esc(part);
+        if(pi<g.a.length){
+          const opts=shuffle(g.o[pi]);
+          h+=`<select data-g="${idx}" data-p="${pi}"><option value="">—</option>${opts.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select>`;
+        }
+      });
+      return h+`</div><div class="fb" id="fb-gaps-${idx}"></div></div>`;
+    }).join('');
+  } else if(k==='error'){
+    state.error={items:d};
+    document.getElementById('box-error').innerHTML=d.map((e,idx)=>`
+      <div class="q"><div class="q-n">${idx+1}</div>
+      <div class="err"><span class="w">${esc(e.w)}</span></div>
+      <input type="text" id="err-${idx}" placeholder="Правильный вариант" style="width:100%;padding:10px;border:2px solid var(--b);border-radius:8px;background:var(--c);margin-top:6px">
+      <div class="fb" id="fb-error-${idx}"></div></div>`).join('');
+  }
+  document.getElementById('score-'+k).textContent='';
+  const fill=document.getElementById('fill-'+k);
+  if(fill) fill.style.width='0';
+}
+
+function sel(k,i,btn){
+  if(state[k].done) return;
+  state[k].ans[i]=btn.dataset.v;
+  btn.parentElement.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function check(k){
+  if(k==='choose'||k==='mix'){
+    const st=state[k]; st.done=true; let ok=0;
+    st.items.forEach((it,idx)=>{
+      const a=st.ans[idx], good=a===it.a; if(good) ok++;
+      document.querySelectorAll(`#box-${k} .q[data-i="${idx}"] .opt`).forEach(b=>{
+        b.disabled=true;
+        if(b.dataset.v===it.a) b.classList.add('ok');
+        else if(b.dataset.v===a&&!good) b.classList.add('bad');
+      });
+      const fb=document.getElementById(`fb-${k}-${idx}`);
+      fb.className='fb '+(good?'ok':'bad');
+      fb.textContent=good?'✓':'✗ '+it.a;
+    });
+    document.getElementById('score-'+k).textContent=ok+' / '+st.items.length;
+    document.getElementById('fill-'+k).style.width=(ok/st.items.length*100)+'%';
+    persist(k,ok,st.items.length);
+  } else if(k==='gaps'){
+    let ok=0,total=0;
+    state.gaps.items.forEach((g,idx)=>{
+      let all=true;
+      g.a.forEach((ans,pi)=>{
+        total++;
+        const sel=document.querySelector(`select[data-g="${idx}"][data-p="${pi}"]`);
+        if(sel.value===ans){ok++;sel.className='ok';} else {all=false;sel.className='bad';}
+        sel.disabled=true;
+      });
+      const fb=document.getElementById('fb-gaps-'+idx);
+      fb.className='fb '+(all?'ok':'bad');
+      fb.textContent=all?'✓':'✗ '+g.a.join(' · ');
+    });
+    document.getElementById('score-gaps').textContent=ok+' / '+total;
+    document.getElementById('fill-gaps').style.width=(total?ok/total*100:0)+'%';
+    persist('gaps',ok,total);
+  } else if(k==='error'){
+    let ok=0;
+    state.error.items.forEach((e,idx)=>{
+      const v=norm(document.getElementById('err-'+idx).value);
+      const good=v===norm(e.r); if(good) ok++;
+      const fb=document.getElementById('fb-error-'+idx);
+      fb.className='fb '+(good?'ok':'bad');
+      fb.textContent=good?'✓':e.r;
+      document.getElementById('err-'+idx).disabled=true;
+    });
+    document.getElementById('score-error').textContent=ok+' / '+state.error.items.length;
+    document.getElementById('fill-error').style.width=(ok/state.error.items.length*100)+'%';
+    persist('error',ok,state.error.items.length);
+  }
+}
+
+function showResult(){
+  const d=loadS();
+  const keys=['choose','gaps','error','mix'];
+  let h='',sumO=0,sumT=0;
+  keys.forEach(k=>{
+    const r=d[tense+'_'+k];
+    if(r){sumO+=r.ok;sumT+=r.total;h+=`<div class="rule"><b>${k}</b> ${r.ok}/${r.total}</div>`;}
+    else h+=`<div class="rule" style="opacity:.6"><b>${k}</b> ещё не проверено</div>`;
+  });
+  if(sumT) h+=`<div class="score">Всего: ${sumO} / ${sumT} (${Math.round(sumO/sumT*100)}%)</div>`;
+  document.getElementById('box-result').innerHTML=h||'<p class="hint">Пройдите упражнения и нажмите «Проверить».</p>';
+}
+
+function resetAll(){
+  if(tense){
+    const d=loadS();
+    Object.keys(d).forEach(k=>{if(k.startsWith(tense+'_')) delete d[k];});
+    saveS(d);
+    build();
+  } else localStorage.removeItem(STORE);
+}
+</script>
 </body>
 </html>
